@@ -8,12 +8,12 @@
 #include "web_interface.h"
 
 // Configuration Wi-Fi et MQTT
-const char *ssid = "MurlocCompany";
-const char *password = "MurlocCompany160107Lupink13Shynael04";
-const char *mqtt_server = "192.168.1.29";
+const char *ssid = "Votre_SSID";
+const char *password = "Votre_Mot_de_passe";
+const char *mqtt_server = "Adresse_IP_du_broker_MQTT";
 const int mqtt_port = 1883;
-const char *mqtt_user = "TheSpeaker";
-const char *mqtt_password = "h45T135t-R3t-3rUct1n6-1hrAm";
+const char *mqtt_user = "Votre_Utilisateur_MQTT";
+const char *mqtt_password = "Votre_Mot_de_passe_MQTT";
 
 // Définition des variables globales
 float temperature = NAN;

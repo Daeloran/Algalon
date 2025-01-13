@@ -8,12 +8,12 @@
 #include "web_interface.h"
 
 // Configuration Wi-Fi et MQTT
-const char *ssid = "Votre_SSID";
-const char *password = "Votre_Mot_de_passe";
-const char *mqtt_server = "Adresse_IP_du_broker_MQTT";
+const char *ssid = "WIFI_SSID";
+const char *password = "WIFI_PASSWORD";
+const char *mqtt_server = "MQTT_ADDRESS";
 const int mqtt_port = 1883;
-const char *mqtt_user = "Votre_Utilisateur_MQTT";
-const char *mqtt_password = "Votre_Mot_de_passe_MQTT";
+const char *mqtt_user = "MQTT_USER";
+const char *mqtt_password = "MQTT_PASSWORD";
 
 // Définition des variables globales
 float temperature = NAN;
@@ -23,6 +23,7 @@ float light = NAN;
 // Définir les broches et capteurs
 #define DHTPIN D4
 #define DHTTYPE DHT22
+#define PIRPIN D5
 
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
@@ -35,6 +36,7 @@ AsyncMqttClient mqttClient;
 // Variables pour la gestion des états et intervalles
 bool dhtConnected = false;
 bool tslConnected = false;
+bool pirState = false; // État du capteur PIR
 unsigned long lastWifiCheck = 0;
 unsigned long lastSensorCheck = 0;
 unsigned long lastPublish = 0;
@@ -185,6 +187,10 @@ void checkSensors()
       Serial.println("Échec de lecture du capteur TSL2561. Tentative de reconnexion...");
     }
   }
+
+  // Lecture du capteur PIR
+  pirState = digitalRead(PIRPIN);
+  Serial.printf("Lecture PIR : Mouvement détecté = %s\n", pirState ? "Oui" : "Non");
 }
 
 void publishSensorData()
@@ -202,6 +208,10 @@ void publishSensorData()
       mqttClient.publish("sensor/light", 0, false, String(light).c_str());
       Serial.printf("Données TSL2561 publiées : Lumière=%.2f lux\n", light);
     }
+
+    // Publication des données PIR
+    mqttClient.publish("sensor/motion", 0, false, pirState ? "1" : "0");
+    Serial.printf("Données PIR publiées : Mouvement détecté = %s\n", pirState ? "Oui" : "Non");
   }
   else
   {
@@ -243,6 +253,10 @@ void setup()
     tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_402MS);
     Serial.println("Capteur TSL2561 connecté !");
   }
+
+  // Initialisation du capteur PIR
+  pinMode(PIRPIN, INPUT);
+  Serial.println("Capteur PIR configuré !");
 
   // Configuration MQTT
   mqttClient.onConnect(onMqttConnect);

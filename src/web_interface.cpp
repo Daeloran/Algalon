@@ -5,6 +5,7 @@ AsyncWebServer server(80);
 
 extern bool dhtConnected;
 extern bool tslConnected;
+extern bool pirState; // Ajout de la variable pour le capteur PIR
 
 const size_t TOTAL_HEAP = 81920; // Taille totale approximative de la RAM (80 kB)
 
@@ -57,6 +58,7 @@ void setupWebServer()
         html += "<h2>Statut des capteurs</h2>";
         html += "<p class='status " + String(dhtConnected ? "connected" : "disconnected") + "'>DHT : " + String(dhtConnected ? "Connecté" : "Déconnecté") + "</p>";
         html += "<p class='status " + String(tslConnected ? "connected" : "disconnected") + "'>TSL2561 : " + String(tslConnected ? "Connecté" : "Déconnecté") + "</p>";
+        html += "<p class='status " + String(pirState ? "connected" : "disconnected") + "'>PIR : " + String(pirState ? "Mouvement détecté" : "Aucun mouvement") + "</p>"; // Nouveau statut PIR ajouté
         
         html += "<h2>Performances de la carte</h2>";
         html += "<p>Uptime : " + formatUptime(millis()) + "</p>";
